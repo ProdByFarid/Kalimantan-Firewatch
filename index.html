@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KALIMANTAN FIRE WATCH (KFW)</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+    <button id="btn-sidebar-toggle" type="button" aria-label="Tutup sidebar" aria-expanded="true" title="Tutup sidebar">&times;</button>
+    <aside id="sidebar">
+    <h1>KALIMANTAN FIRE WATCH</h1>
+    <div class="subtitle">Sistem Deteksi Dini Titik Api<br>Overpass-Aware · Offline-First MVP</div>
+
+    <div class="panel">
+        <h2>Status Sistem</h2>
+        <div class="stat-row">
+            <span>Koneksi API</span>
+            <span id="stat-conn" class="stat-value warn">IDLE</span>
+        </div>
+        <div class="stat-row">
+            <span>Total Hotspot</span>
+            <span id="stat-total" class="stat-value">0</span>
+        </div>
+        <div class="stat-row">
+            <span>Request Hari Ini</span>
+            <span id="stat-req" class="stat-value">0</span>
+        </div>
+        <div class="stat-row">
+            <span>Limit NASA</span>
+            <span class="stat-value">5000/10m</span>
+            </div>
+        <div class="stat-row">
+            <span>Jendela Overpass</span>
+            <span id="stat-overpass" class="badge off">TUTUP</span>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Kontrol</h2>
+        <button id="btn-fetch">Fetch Data Sekarang</button>
+        <button id="btn-sim" class="secondary">Simulasi Overpass</button>
+        <button id="btn-clear" class="secondary">Bersihkan Peta</button>
+    </div>
+    <div class="panel">
+        <h2>Log Sistem</h2>
+        <div id="log"></div>
+    </div>
+    </aside>
+    <main id="map"></main>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/map.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
