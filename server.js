@@ -52,14 +52,21 @@ function parseCsv(csv) {
 async function getHotspots() {
     const minLat = -4.5, maxLat = 2.5, minLon = 108.5, maxLon = 119.5;
     const area = `${minLon},${minLat},${maxLon},${maxLat}`;
-    const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${API_KEY}/VIIRS_SNPP_NRT/${area}/1`;
+    const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${API_KEY}/VIIRS_SNPP_NRT/${area}/3`;
     const response = await fetch(url);
 
     if (!response.ok) {
         throw new Error(`NASA FIRMS mengembalikan HTTP ${response.status}`);
     }
 
-    const data = parseCsv(await response.text());
+    const text = await response.text();
+    console.log('FIRMS response:', text.slice(0, 300));
+
+    if (!text.startsWith('latitude')) {
+        throw new Error(`Respons NASA tidak valid: ${text.slice(0, 100)}`);
+    }
+
+    const data = parseCsv(text);
     return {
         source: 'VIIRS_SNPP_NRT',
         region: 'Kalimantan',
