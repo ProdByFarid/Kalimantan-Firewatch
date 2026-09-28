@@ -13,11 +13,6 @@ const MIME_TYPES = {
     '.js': 'text/javascript; charset=utf-8'
 };
 
-if (!API_KEY) {
-    console.error('NASA_FIRMS_API_KEY belum diatur');
-    process.exit(1);
-}
-
 function loadEnvFile() {
     const envPath = path.join(__dirname, '.env');
     if (!fs.existsSync(envPath)) return;
@@ -55,12 +50,7 @@ function parseCsv(csv) {
 }
 
 async function getHotspots() {
-    const { minLat, maxLat, minLon, maxLon } = {
-        minLat: -4.5,
-        maxLat: 2.5,
-        minLon: 108.5,
-        maxLon: 119.5
-    };
+    const minLat = -4.5, maxLat = 2.5, minLon = 108.5, maxLon = 119.5;
     const area = `${minLon},${minLat},${maxLon},${maxLat}`;
     const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${API_KEY}/VIIRS_SNPP_NRT/${area}/1`;
     const response = await fetch(url);
@@ -80,11 +70,15 @@ async function getHotspots() {
 }
 
 function serveStatic(request, response) {
-    const requestedPath = request.url === '/' ? '/index.html' : request.url;
+    const urlPath = decodeURIComponent(request.url.split('?')[0]);
+    const requestedPath = urlPath === '/' ? '/index.html' : urlPath;
     const filePath = path.normalize(path.join(ROOT, requestedPath));
-    if (!filePath.startsWith(ROOT)) {
-        response.writeHead(403);
-        response.end('Forbidden');
+    const mime = MIME_TYPES[path.extname(filePath)];
+
+    // hanya izinkan .html/.css/.js, jadi .env dan file lain tidak bisa diakses
+    if (!filePath.startsWith(ROOT) || !mime || filePath === __filename) {
+        response.writeHead(404);
+        response.end('Not found');
         return;
     }
 
@@ -94,17 +88,15 @@ function serveStatic(request, response) {
             response.end('Not found');
             return;
         }
-
-        response.writeHead(200, {
-            'Content-Type': MIME_TYPES[path.extname(filePath)] || 'application/octet-stream'
-        });
+        response.writeHead(200, { 'Content-Type': mime });
         response.end(content);
     });
 }
 
-http.createServer(async (request, response) => {
-    if (request.url === '/api/hotspots') {
+async function handler(request, response) {
+    if (request.url.split('?')[0] === '/api/hotspots') {
         try {
+            if (!API_KEY) throw new Error('NASA_FIRMS_API_KEY belum diatur');
             const result = await getHotspots();
             response.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             response.end(JSON.stringify(result));
@@ -116,18 +108,12 @@ http.createServer(async (request, response) => {
     }
 
     serveStatic(request, response);
-}).listen(PORT, () => {
-    console.log(`KFW berjalan di http://localhost:${PORT}`);
-});
-
-const express = require('express');
-const path = require('path');
-const app = express();
-
-app.use(express.static(path.join(__dirname)));
+}
 
 if (process.env.VERCEL) {
-  module.exports = app;      // dipakai Vercel
+    module.exports = handler;               // dipakai Vercel
 } else {
-  app.listen(3000, () => console.log('Running on :3000'));  // lokal
+    http.createServer(handler).listen(PORT, () => {
+        console.log(`KFW berjalan di http://localhost:${PORT}`);
+    });
 }
