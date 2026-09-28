@@ -119,3 +119,15 @@ http.createServer(async (request, response) => {
 }).listen(PORT, () => {
     console.log(`KFW berjalan di http://localhost:${PORT}`);
 });
+
+const express = require('express');
+const path = require('path');
+const app = express();
+
+app.use(express.static(path.join(__dirname)));
+
+if (process.env.VERCEL) {
+  module.exports = app;      // dipakai Vercel
+} else {
+  app.listen(3000, () => console.log('Running on :3000'));  // lokal
+}

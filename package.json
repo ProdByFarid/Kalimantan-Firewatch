@@ -1,0 +1,27 @@
+{
+    "name": "kfw",
+    "version": "1.0.0",
+    "description": "Kalimantan Firewatch",
+    "main": "server.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node server.js"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ProdByFarid/Kalimantan-Firewatch.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+      "url": "https://github.com/ProdByFarid/Kalimantan-Firewatch/issues"
+    },
+    "homepage": "https://github.com/ProdByFarid/Kalimantan-Firewatch#readme",
+    "dependencies": {
+      "cors": "^2.8.6",
+      "dotenv": "^18.0.4",
+      "express": "^5.2.1"
+    }
+}
